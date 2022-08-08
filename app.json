@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "rn-confusion",
+    "slug": "rn-confusion",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "rn-confusion"
+}
