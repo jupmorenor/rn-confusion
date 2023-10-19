@@ -10,7 +10,7 @@ const RenderDish = (props) => {
         return (
             <Card>
                 <Card.Image source={require('./images/uthappizza.png')}>
-                    <Card.Title>{dish.name}</Card.Title>
+                    <Card.FeaturedTitle>{dish.name}</Card.FeaturedTitle>
                 </Card.Image>
                 <Card.Divider />
                 <Text style={{margin: 10}} >
