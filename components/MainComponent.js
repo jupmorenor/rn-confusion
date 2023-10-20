@@ -2,14 +2,27 @@ import React, { Component } from "react";
 import { View, Image, StyleSheet, Text } from "react-native";
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerView } from "@react-navigation/drawer";
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from "react-native-elements";
+import { fetchComments, fetchDishes, fetchLeaders, fetchPromotions } from '../redux/ActionCreators'
 import Menu from './MenuComponent';
 import DishDetail from "./DishDetailComponent";
 import Home from "./HomeComponent";
 import Contact from "./ContactComponent";
 import About from "./AboutComponent";
+import { connect } from "react-redux";
+
+const mapStateToProps = (state) => {
+    return {};
+}
+
+const mapDispatchToProps = (dispatch) => ({
+    fetchDishes: () => dispatch(fetchDishes()),
+    fetchPromotions: () => dispatch(fetchPromotions()),
+    fetchComments: () => dispatch(fetchComments()),
+    fetchLeaders: () => dispatch(fetchLeaders()),
+})
 
 const MenuStackNavigator = createNativeStackNavigator();
 const HomeStackNavigator = createNativeStackNavigator();
@@ -113,6 +126,13 @@ class Main extends Component {
         super(props);
     }
 
+    componentDidMount() {
+        this.props.fetchDishes();
+        this.props.fetchComments();
+        this.props.fetchPromotions();
+        this.props.fetchLeaders();
+    }
+
     RenderMain() {
         return (
             <MainDrawerNavigator.Navigator initialRouteName="Home" 
@@ -200,4 +220,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default Main;
+export default connect(mapStateToProps, mapDispatchToProps)(Main);

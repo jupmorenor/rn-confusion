@@ -1,10 +1,10 @@
 import { legacy_createStore as createStore, combineReducers, applyMiddleware } from 'redux';
-import { createForms } from 'react-redux-form';
+//import { createForms } from 'react-redux-form';
 import { Dishes } from './dishes';
 import { Comments } from './comments';
 import { Promotions } from './promotions';
 import { Leaders } from './leaders';
-import { InitialFeedack } from './forms';
+//import { InitialFeedack } from './forms';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 
@@ -15,9 +15,9 @@ export const ConfigureStore = () => {
             comments: Comments,
             promotions: Promotions,
             leaders: Leaders,
-            ...createForms({
-                feedback: InitialFeedack
-            })
+            //...createForms({
+            //    feedback: InitialFeedack
+            //})
         }), 
         applyMiddleware(thunk, logger)
     );
