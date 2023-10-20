@@ -1,8 +1,10 @@
 import React, { Component } from "react";
-import { View } from "react-native";
+import { View, Image, StyleSheet, Text } from "react-native";
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerView } from "@react-navigation/drawer";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Icon } from "react-native-elements";
 import Menu from './MenuComponent';
 import DishDetail from "./DishDetailComponent";
 import Home from "./HomeComponent";
@@ -88,6 +90,24 @@ const RenderMenu = () => {
     );
 }
 
+const CustomDrawerContentComponent = (props) => {
+    return (
+        <DrawerContentScrollView {...props}>
+            <SafeAreaView style={styles.container}>
+                <View style={styles.drawerHeader}>
+                    <View style={{flex: 1}} >
+                        <Image source={require('./images/logo.png')} style={styles.drawerImage} />
+                    </View>
+                    <View style={{flex: 2}}>
+                        <Text style={styles.drawerHeaderText} >Ristorante Confusion</Text>
+                    </View>
+                </View>
+                <DrawerItemList {...props} />
+            </SafeAreaView>
+        </DrawerContentScrollView>
+    );
+}
+
 class Main extends Component {
     constructor(props) {
         super(props);
@@ -95,25 +115,52 @@ class Main extends Component {
 
     RenderMain() {
         return (
-            <MainDrawerNavigator.Navigator initialRouteName="Home" screenOptions={{drawerActiveBackgroundColor: "#D1C4E9"}}>
+            <MainDrawerNavigator.Navigator initialRouteName="Home" 
+                screenOptions={{
+                    drawerActiveBackgroundColor: "#D1C4E9",
+                    headerStyle: {
+                        backgroundColor: '#512DA8'
+                    },
+                    headerTintColor: '#fff',
+                    headerTitleStyle: {
+                        color: '#fff'
+                    },
+                    
+                }}
+                drawerContent={CustomDrawerContentComponent}
+            >
                 <MainDrawerNavigator.Screen
                     name="Home"
-                    options={{drawerLabel: "Home", title: "Home"}}
+                    options={{
+                        drawerLabel: "Home",
+                        title: "Home",
+                        drawerIcon: ({ color }) => <Icon name="home" type="font-awesome" color={color} size={24} />
+                    }}
                     component={RenderHome}
                 />
                 <MainDrawerNavigator.Screen 
                     name="About" 
-                    options={{drawerLabel: "About Us", title: "About"}}
+                    options={{drawerLabel: "About Us",
+                    title: "About",
+                    drawerIcon: ({ color }) => <Icon name="info-circle" type="font-awesome" color={color} size={24} />
+                }}
                     component={RenderAbout}
                 />
                 <MainDrawerNavigator.Screen 
                     name="Menu" 
-                    options={{drawerLabel: "Menu", title: "Menu"}}
+                    options={{drawerLabel: "Menu",
+                    title: "Menu",
+                    drawerIcon: ({ color }) => <Icon name="list" type="font-awesome" color={color} size={24} />
+                }}
                     component={RenderMenu}
                 />
                 <MainDrawerNavigator.Screen 
                     name="Contact" 
-                    options={{drawerLabel: "Contact Us", title: "Contact"}}
+                    options={{
+                        drawerLabel: "Contact Us",
+                        title: "Contact",
+                        drawerIcon: ({ color }) => <Icon name="address-card" type="font-awesome" color={color} size={22} />
+                    }}
                     component={RenderContact}
                 />
             </MainDrawerNavigator.Navigator>
@@ -130,5 +177,27 @@ class Main extends Component {
         );
     }
 }
+
+const styles = StyleSheet.create({
+    container: { flex: 1},
+    drawerHeader: {
+        backgroundColor: '#512DA8',
+        height: 140,
+        alignItems: "center",
+        justifyContent: "center",
+        flex: 1,
+        flexDirection: "row",
+    },
+    drawerImage: {
+        margin: 10,
+        width: 80,
+        height: 60,
+    },
+    drawerHeaderText: {
+        color: 'white',
+        fontSize: 24,
+        fontWeight: "bold",
+    },
+})
 
 export default Main;
