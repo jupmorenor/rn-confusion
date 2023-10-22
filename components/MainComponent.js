@@ -11,6 +11,7 @@ import DishDetail from "./DishDetailComponent";
 import Home from "./HomeComponent";
 import Contact from "./ContactComponent";
 import About from "./AboutComponent";
+import Reservation from "./ReservationComponent";
 import { connect } from "react-redux";
 
 const mapStateToProps = (state) => {
@@ -27,6 +28,7 @@ const mapDispatchToProps = (dispatch) => ({
 const MenuStackNavigator = createNativeStackNavigator();
 const HomeStackNavigator = createNativeStackNavigator();
 const ContactStackNavigator = createNativeStackNavigator();
+const ReservationStackNavigator = createNativeStackNavigator();
 const AboutStackNavigator = createNativeStackNavigator();
 const MainDrawerNavigator = createDrawerNavigator();
 
@@ -63,6 +65,24 @@ const RenderContact = () => {
         >
             <ContactStackNavigator.Screen name="Contact" component={Contact} />
         </ContactStackNavigator.Navigator>
+    );
+}
+
+const RenderReservation = () => {
+    return (
+        <ReservationStackNavigator.Navigator initialRouteName="Reservation"
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#512DA8'
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    color: '#fff'
+                }
+            }}
+        >
+            <ReservationStackNavigator.Screen name="Reservation" component={Reservation} />
+        </ReservationStackNavigator.Navigator>
     );
 }
 
@@ -182,6 +202,15 @@ class Main extends Component {
                         drawerIcon: ({ color }) => <Icon name="address-card" type="font-awesome" color={color} size={22} />
                     }}
                     component={RenderContact}
+                />
+                <MainDrawerNavigator.Screen 
+                    name="Reservation" 
+                    options={{
+                        drawerLabel: "Reserve table",
+                        title: "Reservation",
+                        drawerIcon: ({ color }) => <Icon name="cutlery" type="font-awesome" color={color} size={24} />
+                    }}
+                    component={RenderReservation}
                 />
             </MainDrawerNavigator.Navigator>
         );
