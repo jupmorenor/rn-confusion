@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, ScrollView, StyleSheet, Switch, Button, Date } from "react-native";
+import { View, Text, ScrollView, StyleSheet, Switch, Button, Modal } from "react-native";
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from "@react-native-picker/picker";
 
@@ -10,6 +10,7 @@ class Reservation extends Component {
             guests: 1,
             smoking: false,
             date: new Date(),
+            showModal: false,
         };
     }
 
@@ -17,13 +18,21 @@ class Reservation extends Component {
         title: 'Reserve Table',
     };
 
-    handleReservation() {
-        console.log(JSON.stringify(this.state));
+    toggleModal() {
+        this.setState({showModal: !this.state.showModal});
+    }
+
+    resetForm() {
         this.setState({
             guests: 1,
             smoking: false,
             date: '',
         });
+    }
+
+    handleReservation() {
+        console.log(JSON.stringify(this.state));
+        this.toggleModal();
     }
 
     //No funciona ninguno de los DateTimePicker probados
@@ -73,6 +82,25 @@ class Reservation extends Component {
                         onPress={() => this.handleReservation()}
                     />
                 </View>
+                <Modal
+                    animationType="slide"
+                    transparent={false}
+                    visible={this.state.showModal}
+                    onDismiss={() => this.resetForm()}
+                    onRequestClose={() => {this.toggleModal(); this.resetForm()}}
+                >
+                    <View style={styles.modal}>
+                        <Text style={styles.modalTitle}>Your reservation</Text>
+                        <Text style={styles.modalText}>Number of guests: {this.state.guests}</Text>
+                        <Text style={styles.modalText}>Smoking?: {this.state.smoking ? "Yes" : "No"}</Text>
+                        <Text style={styles.modalText}>Date of reservation: {this.state.date.toString()}</Text>
+                        <Button
+                            title="Close"
+                            color="#512DA8"
+                            onPress={() => {this.toggleModal(); this.resetForm()}}
+                        />
+                    </View>
+                </Modal>
             </ScrollView>
         );
     }
@@ -97,6 +125,22 @@ const styles = StyleSheet.create({
         marginRight: 20,
         flex: 2,
     },
+    modal: {
+        justifyContent:"center",
+        margin: 20,
+    },
+    modalTitle: {
+        fontSize: 24,
+        fontWeight: "bold",
+        backgroundColor: "#512DA8",
+        textAlign: "center",
+        color: "white",
+        marginBottom: 20,
+    },
+    modalText: {
+        fontSize: 18,
+        margin: 10,
+    }
 });
 
 export default Reservation;
