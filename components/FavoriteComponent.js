@@ -4,13 +4,19 @@ import { ListItem, Avatar } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Loading } from './LoadingComponent';
 import { baseUrl } from '../shared/baseUrl';
+import { deleteFavorite } from '../redux/ActionCreators';
+import { Swipeable, RectButton } from 'react-native-gesture-handler';
 
 const mapStateToProps = (state) => {
     return {
         dishes: state.dishes,
         favorites: state.favorites
-    }
+    };
 }
+
+const mapDispatchToProps = dispatch => ({
+    deleteFavorite: (dishId) => dispatch(deleteFavorite(dishId))
+});
 
 class Favorites extends Component {
 
@@ -19,17 +25,29 @@ class Favorites extends Component {
     };
 
     render() {
-
         const { navigate } = this.props.navigation;
-        const renderMenuItem = ({item, index}) => {
+        const deleteButton = (id) => {
             return (
-                <ListItem key={index} onPress={() => navigate('Dishdetail', {dishId: item.id})} bottomDivider>
-                    <Avatar source={{uri: baseUrl + item.image}}/>
-                    <ListItem.Content>
-                        <ListItem.Title>{item.name}</ListItem.Title>
-                        <ListItem.Subtitle>{item.description}</ListItem.Subtitle>
-                    </ListItem.Content>
-                </ListItem>            
+                <RectButton
+                    style={{backgroundColor: "red", alignContent: "center"}}
+                    onPress={() => this.props.deleteFavorite(id)}
+                ><Text>Delete</Text></RectButton>
+            )
+        }
+        const renderMenuItem = ({item, index}) => { 
+            return (
+                <Swipeable
+                    activateAfterLongPress={2}
+                    renderRightActions={() => deleteButton(item.id)}
+                >
+                    <ListItem key={index} onPress={() => navigate('Dishdetail', {dishId: item.id})} bottomDivider>
+                        <Avatar source={{uri: baseUrl + item.image}}/>
+                        <ListItem.Content>
+                            <ListItem.Title>{item.name}</ListItem.Title>
+                            <ListItem.Subtitle>{item.description}</ListItem.Subtitle>
+                        </ListItem.Content>
+                    </ListItem>            
+                </Swipeable>
             );
         };
 
@@ -55,4 +73,4 @@ class Favorites extends Component {
     }
 }
 
-export default connect(mapStateToProps)(Favorites);
+export default connect(mapStateToProps, mapDispatchToProps)(Favorites);
