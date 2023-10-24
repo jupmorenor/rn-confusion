@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, View, Text } from 'react-native';
+import { FlatList, View, Text, Alert } from 'react-native';
 import { ListItem, Avatar } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Loading } from './LoadingComponent';
@@ -26,20 +26,29 @@ class Favorites extends Component {
 
     render() {
         const { navigate } = this.props.navigation;
-        const deleteButton = (id) => {
+        
+        const deleteButton = (item) => {
+            const alertMessage = () => {
+                Alert.alert(
+                    "Delete favorite?",
+                    "Are you sure you wish to delete your favorite dish " + item.name + "?",
+                    [
+                        {text: "Cancel", style: "cancel", onPress: () => console.log("Not deleted")},
+                        {text: "Ok", onPress: () => this.props.deleteFavorite(item.id)}
+                    ],
+                    {cancelable: false}
+                );
+            }
             return (
                 <RectButton
-                    style={{backgroundColor: "red", alignContent: "center"}}
-                    onPress={() => this.props.deleteFavorite(id)}
+                    style={{backgroundColor: "red", padding: 20 }}
+                    onPress={() => alertMessage()}
                 ><Text>Delete</Text></RectButton>
-            )
+            );
         }
-        const renderMenuItem = ({item, index}) => { 
+        const renderMenuItem = ({item, index}) => {
             return (
-                <Swipeable
-                    activateAfterLongPress={2}
-                    renderRightActions={() => deleteButton(item.id)}
-                >
+                <Swipeable renderRightActions={() => deleteButton(item)}>
                     <ListItem key={index} onPress={() => navigate('Dishdetail', {dishId: item.id})} bottomDivider>
                         <Avatar source={{uri: baseUrl + item.image}}/>
                         <ListItem.Content>
