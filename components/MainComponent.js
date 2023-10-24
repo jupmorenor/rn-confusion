@@ -12,6 +12,7 @@ import Home from "./HomeComponent";
 import Contact from "./ContactComponent";
 import About from "./AboutComponent";
 import Reservation from "./ReservationComponent";
+import Favorites from "./FavoriteComponent";
 import { connect } from "react-redux";
 
 const mapStateToProps = (state) => {
@@ -30,6 +31,7 @@ const HomeStackNavigator = createNativeStackNavigator();
 const ContactStackNavigator = createNativeStackNavigator();
 const ReservationStackNavigator = createNativeStackNavigator();
 const AboutStackNavigator = createNativeStackNavigator();
+const FavoritesStackNavigator = createNativeStackNavigator();
 const MainDrawerNavigator = createDrawerNavigator();
 
 const RenderHome = () => {
@@ -101,6 +103,24 @@ const RenderAbout = () => {
         >
             <AboutStackNavigator.Screen name="About" component={About} />
         </AboutStackNavigator.Navigator>
+    );
+}
+
+const Renderfavorites = () => {
+    return (
+        <FavoritesStackNavigator.Navigator initialRouteName="Favorites"
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#512DA8'
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    color: '#fff'
+                }
+            }}
+        >
+            <FavoritesStackNavigator.Screen name="Favorites" component={Favorites} />
+        </FavoritesStackNavigator.Navigator>
     );
 }
 
@@ -202,6 +222,15 @@ class Main extends Component {
                         drawerIcon: ({ color }) => <Icon name="address-card" type="font-awesome" color={color} size={22} />
                     }}
                     component={RenderContact}
+                />
+                <MainDrawerNavigator.Screen 
+                    name="Favorites" 
+                    options={{
+                        drawerLabel: "My Favorites",
+                        title: "My Favorites",
+                        drawerIcon: ({ color }) => <Icon name="heart" type="font-awesome" color={color} size={24} />
+                    }}
+                    component={Renderfavorites}
                 />
                 <MainDrawerNavigator.Screen 
                     name="Reservation" 
