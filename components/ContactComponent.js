@@ -29,7 +29,7 @@ class Contact extends Component {
                     <Button 
                         style={{backgroundColor: "#512DA8"}}
                         title="Send email"
-                        icon={<Icon type="font-awesome" name="email" color="white" />}
+                        icon={<Icon type="font-awesome" name="envelope-o" color="white" />}
                         onPress={this.sendMail}
                     />
                 </Card>

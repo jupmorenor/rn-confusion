@@ -1,10 +1,11 @@
 import React, { Component } from "react";
-import { View, Image, StyleSheet, Text } from "react-native";
+import { View, Image, StyleSheet, Text, ToastAndroid } from "react-native";
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from "react-native-elements";
+import NetInfo, { NetInfoStateType } from "@react-native-community/netinfo";
 import { fetchComments, fetchDishes, fetchLeaders, fetchPromotions } from '../redux/ActionCreators'
 import Menu from './MenuComponent';
 import DishDetail from "./DishDetailComponent";
@@ -187,12 +188,47 @@ class Main extends Component {
         super(props);
     }
 
+    connectionListener;
+
     componentDidMount() {
         this.props.fetchDishes();
         this.props.fetchComments();
         this.props.fetchPromotions();
         this.props.fetchLeaders();
+
+        NetInfo.fetch().then((connectionInfo) => {
+            ToastAndroid.show(
+                `Initial Network Connectivity Type: ${connectionInfo.type}`, 
+                ToastAndroid.LONG
+            );
+        });
+        this.connectionListener = NetInfo.addEventListener((connectionInfo) => {
+            switch (connectionInfo.type) {
+                case NetInfoStateType.wifi:
+                    ToastAndroid.show('Connected to WiFi', ToastAndroid.LONG);
+                    break;
+                case NetInfoStateType.cellular:
+                    ToastAndroid.show('Connected to Mobile network', ToastAndroid.LONG);
+                    break;
+                case NetInfoStateType.ethernet:
+                    ToastAndroid.show('Connected to Desktop network', ToastAndroid.LONG);
+                    break;
+                case NetInfoStateType.unknown:
+                    ToastAndroid.show('Connected to unknown network', ToastAndroid.LONG);
+                    break;
+                case NetInfoStateType.none:
+                    ToastAndroid.show('Offline', ToastAndroid.LONG);
+                    break;
+                default:
+                    break;
+            }
+        });
+        
     }
+
+    componentWillUnmount() {
+        this.connectionListener();
+    }        
 
     RenderMain() {
         return (
