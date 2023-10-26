@@ -13,6 +13,7 @@ import Contact from "./ContactComponent";
 import About from "./AboutComponent";
 import Reservation from "./ReservationComponent";
 import Favorites from "./FavoriteComponent";
+import Login from "./LoginComponent";
 import { connect } from "react-redux";
 
 const mapStateToProps = (state) => {
@@ -32,6 +33,7 @@ const ContactStackNavigator = createNativeStackNavigator();
 const ReservationStackNavigator = createNativeStackNavigator();
 const AboutStackNavigator = createNativeStackNavigator();
 const FavoritesStackNavigator = createNativeStackNavigator();
+const LoginStackNavigator = createNativeStackNavigator();
 const MainDrawerNavigator = createDrawerNavigator();
 
 const RenderHome = () => {
@@ -120,7 +122,26 @@ const Renderfavorites = () => {
             }}
         >
             <FavoritesStackNavigator.Screen name="Favorites" component={Favorites} />
+            <FavoritesStackNavigator.Screen name="Dishdetail" component={DishDetail} />
         </FavoritesStackNavigator.Navigator>
+    );
+}
+
+const RenderLogin = () => {
+    return (
+        <LoginStackNavigator.Navigator initialRouteName="Login"
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#512DA8'
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    color: '#fff'
+                }
+            }}
+        >
+            <LoginStackNavigator.Screen name="Login" component={Login} />
+        </LoginStackNavigator.Navigator>
     );
 }
 
@@ -149,7 +170,7 @@ const CustomDrawerContentComponent = (props) => {
             <SafeAreaView style={styles.container}>
                 <View style={styles.drawerHeader}>
                     <View style={{flex: 1}} >
-                        <Image source={require('./images/logo.png')} style={styles.drawerImage} />
+                        <Image source={{uri: '/images/logo.png'}} style={styles.drawerImage} />
                     </View>
                     <View style={{flex: 2}}>
                         <Text style={styles.drawerHeaderText} >Ristorante Confusion</Text>
@@ -189,6 +210,15 @@ class Main extends Component {
                 }}
                 drawerContent={CustomDrawerContentComponent}
             >
+                <MainDrawerNavigator.Screen
+                    name="Login"
+                    options={{
+                        drawerLabel: "Login",
+                        title: "Login",
+                        drawerIcon: ({ color }) => <Icon name="sign-in" type="font-awesome" color={color} size={24} />
+                    }}
+                    component={RenderLogin}
+                />
                 <MainDrawerNavigator.Screen
                     name="Home"
                     options={{
@@ -276,6 +306,6 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: "bold",
     },
-})
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

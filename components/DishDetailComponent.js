@@ -169,7 +169,7 @@ class DishDetail extends Component {
                     <View style={styles.modal}>
                         <Text style={styles.modalTitle}>Your comment</Text>
                         <Rating
-                        showRating
+                            showRating
                             value={this.state.rating}
                             startingValue={0}
                             fractions="{1}"
