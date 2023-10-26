@@ -17,6 +17,8 @@
     "@react-navigation/native": "^6.1.8",
     "@react-navigation/native-stack": "^6.9.14",
     "expo": "~49.0.15",
+    "expo-asset": "~8.10.1",
+    "expo-image-manipulator": "~11.3.0",
     "expo-image-picker": "~14.3.2",
     "expo-mail-composer": "~12.3.0",
     "expo-notifications": "~0.20.1",

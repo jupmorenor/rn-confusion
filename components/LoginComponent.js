@@ -4,6 +4,8 @@ import { Input, CheckBox, Card, Icon, Button } from 'react-native-elements';
 import * as SecureStore from 'expo-secure-store';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
+import * as Asset from "expo-asset";
 import baseUrl from '../shared/baseUrl';
 
 class LoginTab extends Component {
@@ -110,10 +112,19 @@ class RegisterTab extends Component {
             });
             if (!capturedImage.canceled) {
                 console.log(capturedImage);
-                this.setState({imageUrl: capturedImage.uri });
+                this.processImage(capturedImage.uri);
             }
         }
 
+    }
+
+    async processImage(imageUri) {
+        let processedImage = await ImageManipulator.manipulateAsync(imageUri, [
+            { resize: { width: 400 }}
+        ], {
+            format: 'png',
+        });
+        this.setState({ imageUri: processedImage.uri });
     }
     
     static navigationOptions = {
@@ -136,7 +147,7 @@ class RegisterTab extends Component {
                 <View style={styles.imageContainer}>
                     <Image 
                         source={{uri: this.state.imageUrl}} 
-                        loadingIndicatorSource={{uri: this.state.imageUrl}}
+                        loadingIndicatorSource={require('./images/logo.png')}
                         style={styles.image} 
                     />
                     <Button
