@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, ScrollView, StyleSheet, Switch, Button, Alert } from "react-native";
+import { View, Text, ScrollView, StyleSheet, Switch, Button, Alert /*, PermissionsAndroid */ } from "react-native";
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from "@react-native-picker/picker";
 import * as Animatable from 'react-native-animatable';
@@ -41,11 +41,12 @@ class Reservation extends Component {
     }
 
     // Revisar https://github.com/expo/fyi/blob/main/legacy-notifications-to-expo-notifications.md
+    // Revisar como obtener permisos SOLO ANDROID?
     async obtainNotificationPermission() {
-        let permission = await Permissions.getAsync(Permissions.USER_FACING_NOTIFICATIONS);
-        if (permission.status !== 'granted') {
-            permission = await Permissions.askAsync(Permissions.USER_FACING_NOTIFICATIONS);
-            if (permission.status !== 'granted') {
+        let permission = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.USER_FACING_NOTIFICATIONS);
+        if (permission !== PermissionsAndroid.RESULTS.GRANTED) {
+            permission = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.USER_FACING_NOTIFICATIONS);
+            if (permission !== PermissionsAndroid.RESULTS.GRANTED) {
                 Alert.alert('Permission not granted to show notifications');
             }
         }

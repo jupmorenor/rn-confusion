@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { View, Text, ScrollView, FlatList, Modal, StyleSheet, Button, PanResponder, Alert, Share } from "react-native";
-import { Card, Icon, Rating, Input } from "react-native-elements";
+import { View, Text, ScrollView, FlatList, Modal, StyleSheet, PanResponder, Alert, Share } from "react-native";
+import { Card, Icon, Rating, Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
 import { baseUrl } from '../shared/baseUrl';
 import { postFavorites, postComment } from "../redux/ActionCreators";
