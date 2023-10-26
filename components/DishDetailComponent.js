@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, ScrollView, FlatList, Modal, StyleSheet, Button, PanResponder, Alert } from "react-native";
+import { View, Text, ScrollView, FlatList, Modal, StyleSheet, Button, PanResponder, Alert, Share } from "react-native";
 import { Card, Icon, Rating, Input } from "react-native-elements";
 import { connect } from "react-redux";
 import { baseUrl } from '../shared/baseUrl';
@@ -54,7 +54,17 @@ const RenderDish = (props) => {
 
             return true;
         }
-    })
+    });
+
+    const shareDish = (title, message, url) => {
+        Share.share({
+            title: title,
+            message: `${title}: ${message}  ${url}`,
+            url: url,
+        }, {
+            dialogTitle: "Share " + title,
+        });
+    }
 
     if (dish !== null) {
         return (
@@ -74,6 +84,9 @@ const RenderDish = (props) => {
                         />
                         <Icon style={{flex: 1}} raised reverse type="font-awesome" color="#512DA8" name="pencil"
                             onPress={() => props.toggleModal()}
+                        />
+                        <Icon style={{flex: 1}} raised reverse type="font-awesome" color="#51D2A8" name="share"
+                            onPress={() => shareDish(dish.name, dish.description, baseUrl + dish.image)}
                         />
                     </View>
                 </Card>
