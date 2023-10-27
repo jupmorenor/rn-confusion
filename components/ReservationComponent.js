@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { View, Text, ScrollView, StyleSheet, Switch, Button, Alert /*, PermissionsAndroid */ } from "react-native";
+import { View, Text, ScrollView, StyleSheet, Switch, Button, Alert } from "react-native";
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from "@react-native-picker/picker";
 import * as Animatable from 'react-native-animatable';
 import * as Notifications from 'expo-notifications';
+import * as Calendar from 'expo-calendar';
 
 class Reservation extends Component {
     constructor(props) {
@@ -23,7 +24,7 @@ class Reservation extends Component {
         this.setState({
             guests: 1,
             smoking: false,
-            date: '',
+            date: new Date(),
         });
     }
 
@@ -34,39 +35,52 @@ class Reservation extends Component {
             `Number of guests: ${this.state.guests}\nSmoking?: ${this.state.smoking ? "Yes" : "No"}\nDate of reservation: ${this.state.date.toString()}`,
             [
                 {text: "Cancel", style: "cancel", onPress: () => this.resetForm()},
-                {text: "Ok", onPress: () => this.presentLocalNotification(this.state.date)}
+                {text: "Ok", onPress: () => {this.presentLocalNotification(this.state.date); this.addReservationToCalendar(this.state.date)}}
             ],
             {cancelable: false}
         );
     }
 
-    // Revisar https://github.com/expo/fyi/blob/main/legacy-notifications-to-expo-notifications.md
-    // Revisar como obtener permisos SOLO ANDROID?
-    async obtainNotificationPermission() {
-        let permission = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.USER_FACING_NOTIFICATIONS);
-        if (permission !== PermissionsAndroid.RESULTS.GRANTED) {
-            permission = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.USER_FACING_NOTIFICATIONS);
-            if (permission !== PermissionsAndroid.RESULTS.GRANTED) {
+    obtainNotificationPermission = async () => {
+        let permission = await Notifications.requestPermissionsAsync()
+        if (!permission.granted) {
+            permission = await Notifications.requestPermissionsAsync()
+            if (!permission.granted) {
                 Alert.alert('Permission not granted to show notifications');
             }
         }
-        return permission;
+        return permission.granted;
     }
 
-    async presentLocalNotification(date) {
+    presentLocalNotification = async (date) => {
         await this.obtainNotificationPermission();
         Notifications.scheduleNotificationAsync({
-            title: 'Your Reservation',
-            body: 'Reservation for '+ date + ' requested',
-            ios: {
-                sound: true
-            },
-            android: {
-                sound: true,
+            content: {
+                title: 'Your Reservation',
+                body: 'Reservation for '+ date + ' requested',
+                color: '#512DA8',
                 vibrate: true,
-                color: '#512DA8'
+                sound: true,
             }
         });
+    }
+
+    obtainCalendarPermission = async () => {
+        let calendarPermission = await Calendar.requestCalendarPermissionsAsync();
+        return calendarPermission.granted;
+    }
+
+    addReservationToCalendar = async (eventDate) => {
+        const date = Date.parse(eventDate)
+        if (await this.obtainCalendarPermission()) {
+            Calendar.createEventAsync(Calendar.getDefaultCalendarAsync(), {
+                title: "Con Fusion Table Reservation",
+                startDate: new Date(eventDate),
+                endDate: new Date(eventDate+(2*60*60*1000)),
+                timeZone: "Asia/Hong_Kong",
+                location: "121, Clear Water Bay Road, Clear Water Bay, Kowloon, Hong Kong",
+            });
+        }
     }
 
     //No funciona ninguno de los DateTimePicker probados

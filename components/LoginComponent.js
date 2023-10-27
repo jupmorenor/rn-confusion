@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text, ScrollView, Image/* , PermissionsAndroid */ } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, Image } from 'react-native';
 import { Input, CheckBox, Card, Icon, Button } from 'react-native-elements';
 import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import * as ImagePicker from "expo-image-picker";
 import * as ImageManipulator from "expo-image-manipulator";
-import * as Asset from "expo-asset";
-import baseUrl from '../shared/baseUrl';
+import * as Device from "expo-device";
+import { baseUrl } from '../shared/baseUrl';
 
 class LoginTab extends Component {
 
@@ -21,14 +22,25 @@ class LoginTab extends Component {
     }
 
     componentDidMount() {
-        SecureStore.getItemAsync('userinfo').then((userdata) => {
-            let userinfo = JSON.parse(userdata);
-            if (userinfo) {
-                this.setState({username: userinfo.username});
-                this.setState({password: userinfo.password});
-                this.setState({remember: true})
-            }
-        });
+        if (Device.osName !== "Windows") {
+            SecureStore.getItemAsync('userinfo').then((userdata) => {
+                let userinfo = JSON.parse(userdata);
+                if (userinfo) {
+                    this.setState({username: userinfo.username});
+                    this.setState({password: userinfo.password});
+                    this.setState({remember: true})
+                }
+            });
+        } else {
+            AsyncStorage.getItem('userinfo').then((userdata) => {
+                let userinfo = JSON.parse(userdata);
+                if (userinfo) {
+                    this.setState({username: userinfo.username});
+                    this.setState({password: userinfo.password});
+                    this.setState({remember: true})
+                }
+            });
+        }
     }
 
     static navigationOptions = {
@@ -37,13 +49,23 @@ class LoginTab extends Component {
     };
 
     handleLogin() {
-        console.log(JSON.stringify(this.state));
-        if (this.state.remember) {
-            SecureStore.setItemAsync('userinfo', JSON.stringify({username: this.state.username, password: this.state.password}))
-                .catch((error) => console.log('Could not save user info', error));
+        console.log(JSON.stringify(this.state), Device.osName);
+        if (Device.osName !== "Windows") {
+            if (this.state.remember) {
+                SecureStore.setItemAsync('userinfo', JSON.stringify({username: this.state.username, password: this.state.password}))
+                    .catch((error) => console.log('Could not save user info', error));
+            } else {
+                SecureStore.deleteItemAsync('userinfo')
+                    .catch((error) => console.log('Could not delete user info', error));
+            }
         } else {
-            SecureStore.deleteItemAsync('userinfo')
-                .catch((error) => console.log('Could not delete user info', error));
+            if (this.state.remember) {
+                AsyncStorage.setItem('userinfo', JSON.stringify({username: this.state.username, password: this.state.password}))
+                    .catch((error) => console.log('Could not save user info', error));
+            } else {
+                AsyncStorage.deleteItem('userinfo')
+                    .catch((error) => console.log('Could not delete user info', error));
+            }
         }
     }
 
@@ -100,25 +122,36 @@ class RegisterTab extends Component {
         }
     }
 
-    // Revisar como obtener permisos SOLO ANDROID?
     getImageFromCamera = async () => {
-        const cameraPermission = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
-        const cameraRollPermission = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA_ROLL);
+        const cameraPermission = await ImagePicker.requestCameraPermissionsAsync();
 
-        if (cameraPermission === PermissionsAndroid.RESULTS.GRANTED && cameraRollPermission === PermissionsAndroid.RESULTS.GRANTED) {
-            let capturedImage = await ImagePicker.launchCameraAsync({
+        if (cameraPermission.granted) {
+            let capturedImage = await ImagePicker.relaunchCameraAsync({
                 allowsEditing: true,
                 aspect: [4, 3],
             });
             if (!capturedImage.canceled) {
                 console.log(capturedImage);
-                this.processImage(capturedImage.uri);
+                await this.processImage(capturedImage.assets[0].uri);
             }
         }
-
     }
 
-    async processImage(imageUri) {
+    getImageFromGallery = async () => {
+        const galleryPermission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (galleryPermission.granted) {
+            let selectedImage = await ImagePicker.launchImageLibraryAsync({
+                allowsEditing: true,
+                aspect: [4, 3],
+            });
+            if (!selectedImage.canceled) {
+                console.log(selectedImage);
+                await this.processImage(selectedImage.assets[0].uri);
+            }
+        }
+    }
+
+    processImage = async (imageUri) => {
         let processedImage = await ImageManipulator.manipulateAsync(imageUri, [
             { resize: { width: 400 }}
         ], {
@@ -133,10 +166,17 @@ class RegisterTab extends Component {
     };
 
     handleRegister() {
-        console.log(JSON.stringify(this.state));
-        if (this.state.remember) {
-            SecureStore.setItemAsync('userinfo', JSON.stringify({username: this.state.username, password: this.state.password}))
-                .catch((error) => console.log('Could not save user info', error));
+        console.log(JSON.stringify(this.state), Device.osName);
+        if (Device.osName !== "Windows") {
+            if (this.state.remember) {
+                SecureStore.setItemAsync('userinfo', JSON.stringify({username: this.state.username, password: this.state.password}))
+                    .catch((error) => console.log('Could not save user info', error));
+            }
+        } else {
+            if (this.state.remember) {
+                AsyncStorage.setItem('userinfo', JSON.stringify({username: this.state.username, password: this.state.password}))
+                    .catch((error) => console.log('Could not save user info', error));
+            }
         }
     }
 
@@ -153,6 +193,10 @@ class RegisterTab extends Component {
                     <Button
                         title="Camera"
                         onPress={this.getImageFromCamera}
+                    />
+                    <Button
+                        title="Gallery"
+                        onPress={this.getImageFromGallery}
                     />
                 </View>
                 <Input
@@ -250,7 +294,8 @@ const styles = StyleSheet.create({
     imageContainer: {
         flex: 1,
         flexDirection: 'row',
-        margin: 20
+        margin: 20,
+        justifyContent: 'space-between',
     },
 });
 
