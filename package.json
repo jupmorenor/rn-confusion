@@ -17,7 +17,7 @@
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/drawer": "^6.6.4",
     "@react-navigation/native": "^6.1.8",
-    "@react-navigation/native-stack": "^6.9.14",
+    "@react-navigation/native-stack": "^6.9.17",
     "expo": "~49.0.15",
     "expo-calendar": "~11.3.2",
     "expo-device": "~5.4.0",
