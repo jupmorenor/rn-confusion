@@ -20,7 +20,7 @@
     "@react-navigation/native-stack": "^6.9.14",
     "expo": "~49.0.15",
     "expo-calendar": "~11.3.2",
-    "expo-device": "~5.4.0",
+    "expo-device": "~8.0.9",
     "expo-image-manipulator": "~11.3.0",
     "expo-image-picker": "~14.3.2",
     "expo-mail-composer": "~12.3.0",
